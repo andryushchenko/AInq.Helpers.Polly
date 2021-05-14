@@ -25,14 +25,31 @@ namespace AInq.Helpers.Polly
 
 public static class HttpPolicyHelper
 {
+    private const string ClientKey = "client";
+    private const string MethodKey = "method";
+    private const string ContentKey = "url";
+    private const string UrlKey = "content";
+
     private static async Task<HttpResponseMessage> RequestAsync(this IAsyncPolicy<HttpResponseMessage> policy, HttpClient client, string url,
         HttpMethod method, HttpContent? content, ILogger logger, CancellationToken cancellation = default)
     {
-        using var request = new HttpRequestMessage(method, url) {Content = content};
+        var context = new Context().With(ClientKey, client)
+                                   .With(MethodKey, method)
+                                   .With(UrlKey, url)
+                                   .WithCancellation(cancellation)
+                                   .WithLogger(logger);
+        if (content != null)
+            context.With(ContentKey, content);
         var result = await policy
-                           .ExecuteAsync((ctx, cancel)
-                                   => ctx.Get<HttpClient>("client")!.SendAsync(ctx.Get<HttpRequestMessage>("request")!, cancel),
-                               new Context().With("client", client).With("request", request).WithCancellation(cancellation).WithLogger(logger),
+                           .ExecuteAsync(async (ctx, cancel) =>
+                               {
+                                   using var request = new HttpRequestMessage(ctx.Get<HttpMethod>(MethodKey)!, ctx.Get<string>(UrlKey))
+                                   {
+                                       Content = ctx.Get<HttpContent>(ContentKey)
+                                   };
+                                   return await ctx.Get<HttpClient>(ClientKey)!.SendAsync(request, cancel);
+                               },
+                               context,
                                cancellation,
                                false)
                            .ConfigureAwait(false);
