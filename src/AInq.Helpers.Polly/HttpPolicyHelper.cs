@@ -23,6 +23,7 @@ using System.Threading.Tasks;
 namespace AInq.Helpers.Polly
 {
 
+/// <summary> Helper to make HTTP requests with given <see cref="IAsyncPolicy{TResult}" /> </summary>
 public static class HttpPolicyHelper
 {
     private const string ClientKey = "client";
@@ -63,6 +64,12 @@ public static class HttpPolicyHelper
 
 #region Get
 
+    /// <summary> HTTP Get using preconfigured <see cref="HttpClient" /> </summary>
+    /// <param name="policy"> Request policy </param>
+    /// <param name="client"> Preconfigured HttpClient </param>
+    /// <param name="url"> Request URL </param>
+    /// <param name="logger"> Logger instance </param>
+    /// <param name="cancellation"> Cancellation token </param>
     public static async Task<HttpResponseMessage> GetAsync(this IAsyncPolicy<HttpResponseMessage> policy, HttpClient client, string? url,
         ILogger logger, CancellationToken cancellation = default)
         => await (policy ?? throw new ArgumentNullException(nameof(policy)))
@@ -74,6 +81,11 @@ public static class HttpPolicyHelper
                      cancellation)
                  .ConfigureAwait(false);
 
+    /// <summary> HTTP Get using preconfigured <see cref="HttpClient" /> </summary>
+    /// <param name="policy"> Request policy </param>
+    /// <param name="client"> Preconfigured HttpClient </param>
+    /// <param name="url"> Request URL </param>
+    /// <param name="cancellation"> Cancellation token </param>
     public static async Task<HttpResponseMessage> GetAsync(this IAsyncPolicy<HttpResponseMessage> policy, HttpClient client, string? url,
         CancellationToken cancellation = default)
         => await (policy ?? throw new ArgumentNullException(nameof(policy)))
@@ -85,6 +97,11 @@ public static class HttpPolicyHelper
                      cancellation)
                  .ConfigureAwait(false);
 
+    /// <summary> HTTP Get </summary>
+    /// <param name="policy"> Request policy </param>
+    /// <param name="url"> Request URL </param>
+    /// <param name="logger"> Logger instance </param>
+    /// <param name="cancellation"> Cancellation token </param>
     public static async Task<HttpResponseMessage> GetAsync(this IAsyncPolicy<HttpResponseMessage> policy, string? url, ILogger logger,
         CancellationToken cancellation = default)
     {
@@ -94,6 +111,10 @@ public static class HttpPolicyHelper
                      .ConfigureAwait(false);
     }
 
+    /// <summary> HTTP Get </summary>
+    /// <param name="policy"> Request policy </param>
+    /// <param name="url"> Request URL </param>
+    /// <param name="cancellation"> Cancellation token </param>
     public static async Task<HttpResponseMessage> GetAsync(this IAsyncPolicy<HttpResponseMessage> policy, string? url,
         CancellationToken cancellation = default)
     {
@@ -107,6 +128,12 @@ public static class HttpPolicyHelper
 
 #region Delete
 
+    /// <summary> HTTP Delete using preconfigured <see cref="HttpClient" /> </summary>
+    /// <param name="policy"> Request policy </param>
+    /// <param name="client"> Preconfigured HttpClient </param>
+    /// <param name="url"> Request URL </param>
+    /// <param name="logger"> Logger instance </param>
+    /// <param name="cancellation"> Cancellation token </param>
     public static async Task<HttpResponseMessage> DeleteAsync(this IAsyncPolicy<HttpResponseMessage> policy, HttpClient client, string? url,
         ILogger logger, CancellationToken cancellation = default)
         => await (policy ?? throw new ArgumentNullException(nameof(policy)))
@@ -118,6 +145,11 @@ public static class HttpPolicyHelper
                      cancellation)
                  .ConfigureAwait(false);
 
+    /// <summary> HTTP Delete using preconfigured <see cref="HttpClient" /> </summary>
+    /// <param name="policy"> Request policy </param>
+    /// <param name="client"> Preconfigured HttpClient </param>
+    /// <param name="url"> Request URL </param>
+    /// <param name="cancellation"> Cancellation token </param>
     public static async Task<HttpResponseMessage> DeleteAsync(this IAsyncPolicy<HttpResponseMessage> policy, HttpClient client, string? url,
         CancellationToken cancellation = default)
         => await (policy ?? throw new ArgumentNullException(nameof(policy)))
@@ -129,6 +161,11 @@ public static class HttpPolicyHelper
                      cancellation)
                  .ConfigureAwait(false);
 
+    /// <summary> HTTP Delete </summary>
+    /// <param name="policy"> Request policy </param>
+    /// <param name="url"> Request URL </param>
+    /// <param name="logger"> Logger instance </param>
+    /// <param name="cancellation"> Cancellation token </param>
     public static async Task<HttpResponseMessage> DeleteAsync(this IAsyncPolicy<HttpResponseMessage> policy, string? url, ILogger logger,
         CancellationToken cancellation = default)
     {
@@ -138,6 +175,10 @@ public static class HttpPolicyHelper
                      .ConfigureAwait(false);
     }
 
+    /// <summary> HTTP Delete </summary>
+    /// <param name="policy"> Request policy </param>
+    /// <param name="url"> Request URL </param>
+    /// <param name="cancellation"> Cancellation token </param>
     public static async Task<HttpResponseMessage> DeleteAsync(this IAsyncPolicy<HttpResponseMessage> policy, string? url,
         CancellationToken cancellation = default)
     {
@@ -151,6 +192,13 @@ public static class HttpPolicyHelper
 
 #region Post
 
+    /// <summary> HTTP Post using preconfigured <see cref="HttpClient" /> </summary>
+    /// <param name="policy"> Request policy </param>
+    /// <param name="client"> Preconfigured HttpClient </param>
+    /// <param name="url"> Request URL </param>
+    /// <param name="content"> Request content </param>
+    /// <param name="logger"> Logger instance </param>
+    /// <param name="cancellation"> Cancellation token </param>
     public static async Task<HttpResponseMessage> PostAsync(this IAsyncPolicy<HttpResponseMessage> policy, HttpClient client, string? url,
         HttpContent content, ILogger logger, CancellationToken cancellation = default)
         => await (policy ?? throw new ArgumentNullException(nameof(policy)))
@@ -162,6 +210,12 @@ public static class HttpPolicyHelper
                      cancellation)
                  .ConfigureAwait(false);
 
+    /// <summary> HTTP Post using preconfigured <see cref="HttpClient" /> </summary>
+    /// <param name="policy"> Request policy </param>
+    /// <param name="client"> Preconfigured HttpClient </param>
+    /// <param name="url"> Request URL </param>
+    /// <param name="content"> Request content </param>
+    /// <param name="cancellation"> Cancellation token </param>
     public static async Task<HttpResponseMessage> PostAsync(this IAsyncPolicy<HttpResponseMessage> policy, HttpClient client, string? url,
         HttpContent content, CancellationToken cancellation = default)
         => await (policy ?? throw new ArgumentNullException(nameof(policy)))
@@ -173,6 +227,12 @@ public static class HttpPolicyHelper
                      cancellation)
                  .ConfigureAwait(false);
 
+    /// <summary> HTTP Post </summary>
+    /// <param name="policy"> Request policy </param>
+    /// <param name="url"> Request URL </param>
+    /// <param name="content"> Request content </param>
+    /// <param name="logger"> Logger instance </param>
+    /// <param name="cancellation"> Cancellation token </param>
     public static async Task<HttpResponseMessage> PostAsync(this IAsyncPolicy<HttpResponseMessage> policy, string? url, HttpContent content,
         ILogger logger, CancellationToken cancellation = default)
     {
@@ -187,6 +247,11 @@ public static class HttpPolicyHelper
                      .ConfigureAwait(false);
     }
 
+    /// <summary> HTTP Post </summary>
+    /// <param name="policy"> Request policy </param>
+    /// <param name="url"> Request URL </param>
+    /// <param name="content"> Request content </param>
+    /// <param name="cancellation"> Cancellation token </param>
     public static async Task<HttpResponseMessage> PostAsync(this IAsyncPolicy<HttpResponseMessage> policy, string? url, HttpContent content,
         CancellationToken cancellation = default)
     {
@@ -205,6 +270,13 @@ public static class HttpPolicyHelper
 
 #region Put
 
+    /// <summary> HTTP Put using preconfigured <see cref="HttpClient" /> </summary>
+    /// <param name="policy"> Request policy </param>
+    /// <param name="client"> Preconfigured HttpClient </param>
+    /// <param name="url"> Request URL </param>
+    /// <param name="content"> Request content </param>
+    /// <param name="logger"> Logger instance </param>
+    /// <param name="cancellation"> Cancellation token </param>
     public static async Task<HttpResponseMessage> PutAsync(this IAsyncPolicy<HttpResponseMessage> policy, HttpClient client, string? url,
         HttpContent content, ILogger logger, CancellationToken cancellation = default)
         => await (policy ?? throw new ArgumentNullException(nameof(policy)))
@@ -216,6 +288,12 @@ public static class HttpPolicyHelper
                      cancellation)
                  .ConfigureAwait(false);
 
+    /// <summary> HTTP Put using preconfigured <see cref="HttpClient" /> </summary>
+    /// <param name="policy"> Request policy </param>
+    /// <param name="client"> Preconfigured HttpClient </param>
+    /// <param name="url"> Request URL </param>
+    /// <param name="content"> Request content </param>
+    /// <param name="cancellation"> Cancellation token </param>
     public static async Task<HttpResponseMessage> PutAsync(this IAsyncPolicy<HttpResponseMessage> policy, HttpClient client, string? url,
         HttpContent content, CancellationToken cancellation = default)
         => await (policy ?? throw new ArgumentNullException(nameof(policy)))
@@ -227,6 +305,12 @@ public static class HttpPolicyHelper
                      cancellation)
                  .ConfigureAwait(false);
 
+    /// <summary> HTTP Put </summary>
+    /// <param name="policy"> Request policy </param>
+    /// <param name="url"> Request URL </param>
+    /// <param name="content"> Request content </param>
+    /// <param name="logger"> Logger instance </param>
+    /// <param name="cancellation"> Cancellation token </param>
     public static async Task<HttpResponseMessage> PutAsync(this IAsyncPolicy<HttpResponseMessage> policy, string? url, HttpContent content,
         ILogger logger, CancellationToken cancellation = default)
     {
@@ -241,6 +325,11 @@ public static class HttpPolicyHelper
                      .ConfigureAwait(false);
     }
 
+    /// <summary> HTTP Put </summary>
+    /// <param name="policy"> Request policy </param>
+    /// <param name="url"> Request URL </param>
+    /// <param name="content"> Request content </param>
+    /// <param name="cancellation"> Cancellation token </param>
     public static async Task<HttpResponseMessage> PutAsync(this IAsyncPolicy<HttpResponseMessage> policy, string? url, HttpContent content,
         CancellationToken cancellation = default)
     {

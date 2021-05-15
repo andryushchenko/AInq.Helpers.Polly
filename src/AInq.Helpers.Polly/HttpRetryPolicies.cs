@@ -21,17 +21,25 @@ using System.Net.Http;
 namespace AInq.Helpers.Polly
 {
 
+/// <summary> Retry policies for HTTP requests </summary>
 public static class HttpRetryPolicies
 {
+    /// <summary> Retry forever on transient errors with logging if request context contains logger </summary>
     public static IAsyncPolicy<HttpResponseMessage> TransientRetryAsyncPolicy()
         => Policy.Handle<HttpRequestException>()
                  .OrResult<HttpResponseMessage>(response
                      => response.StatusCode == HttpStatusCode.RequestTimeout || (int) response.StatusCode >= 500)
                  .RetryForeverAsync(OnTransientRetry);
 
+
+    /// <summary> Retry forever with increasing timeout on HTTP 429 with logging if request context contains logger </summary>
+    /// <param name="timeout"> Minimum retry timeout </param>
     public static IAsyncPolicy<HttpResponseMessage> TimeoutRetryAsyncPolicy(TimeSpan timeout)
-        => Policy.HandleResult<HttpResponseMessage>(response => response.StatusCode == (HttpStatusCode) 429)
-                 .WaitAndRetryForeverAsync((attempt, _) => TimeSpan.FromTicks(timeout.Ticks * attempt * attempt), OnTimeoutRetry);
+    {
+        if (timeout < TimeSpan.Zero) throw new ArgumentOutOfRangeException(nameof(timeout));
+        return Policy.HandleResult<HttpResponseMessage>(response => response.StatusCode == (HttpStatusCode) 429)
+                     .WaitAndRetryForeverAsync((attempt, _) => TimeSpan.FromTicks(timeout.Ticks * attempt * attempt), OnTimeoutRetry);
+    }
 
     private static void OnTimeoutRetry(DelegateResult<HttpResponseMessage> result, int attempt, TimeSpan wait, Context context)
         => context.GetLogger()

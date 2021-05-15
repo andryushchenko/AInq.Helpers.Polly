@@ -21,11 +21,16 @@ using System.Threading;
 namespace AInq.Helpers.Polly
 {
 
+/// <summary> Helpers to store data in <see cref="Context" /> </summary>
 public static class ContextHelper
 {
-    private const string CancellationKey = "cancellation";
-    private const string LoggerKey = "logger";
+    private const string CancellationKey = "AInq.Helpers.Polly.Context.Cancellation";
+    private const string LoggerKey = "AInq.Helpers.Polly.Context.Logger";
 
+    /// <summary> Get data from context by key </summary>
+    /// <param name="context"> Context </param>
+    /// <param name="key"> Data key </param>
+    /// <typeparam name="T">Data type </typeparam>
     public static T? Get<T>(this Context context, string key)
         => (context ?? throw new ArgumentNullException(nameof(context)))
            .TryGetValue(string.IsNullOrWhiteSpace(key) ? throw new ArgumentNullException(nameof(key)) : key, out var value)
@@ -33,6 +38,10 @@ public static class ContextHelper
             ? result
             : default;
 
+    /// <summary> Add data to context with key </summary>
+    /// <param name="context"> Context </param>
+    /// <param name="key"> Data key </param>
+    /// <param name="value"> Data value</param>
     public static Context With(this Context context, string key, object value)
     {
         (context ?? throw new ArgumentNullException(nameof(context)))[string.IsNullOrWhiteSpace(key)
@@ -41,17 +50,27 @@ public static class ContextHelper
         return context;
     }
 
+    /// <summary> Add <see cref="CancellationToken" /> to context </summary>
+    /// <param name="context"> Context </param>
+    /// <param name="cancellation"> Cancellation token </param>
     public static Context WithCancellation(this Context context, CancellationToken cancellation)
         => context.With(CancellationKey, cancellation);
 
-    public static CancellationToken GetCancellationToken(this Context context, string key = CancellationKey)
-        => context.Get<CancellationToken>(key);
+    /// <summary> Get <see cref="CancellationToken" /> from context </summary>
+    /// <param name="context"> Context </param>
+    public static CancellationToken GetCancellationToken(this Context context)
+        => context.Get<CancellationToken>(CancellationKey);
 
+    /// <summary> Add logger to context </summary>
+    /// <param name="context"> Context </param>
+    /// <param name="logger"> Logger instance </param>
     public static Context WithLogger(this Context context, ILogger logger)
         => context.With(LoggerKey, logger ?? throw new ArgumentNullException(nameof(logger)));
 
-    public static ILogger GetLogger(this Context context, string key = LoggerKey)
-        => context.Get<ILogger>(key) ?? NullLogger.Instance;
+    /// <summary> Get logger from context </summary>
+    /// <param name="context"> Context </param>
+    public static ILogger GetLogger(this Context context)
+        => context.Get<ILogger>(LoggerKey) ?? NullLogger.Instance;
 }
 
 }
