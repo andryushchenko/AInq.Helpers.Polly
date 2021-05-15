@@ -21,5 +21,4 @@ As for now documentation is provided in this document and by XML documentation i
 If you find a bug, have a question or something else - you are friendly welcome to open an issue.
 
 ## License
-Copyright © 2021 Anton Andryushchenko. AInq.Helpers.Polly is licensed under [Apache License 2.0](LICENSE)
-
+Copyright Â© 2021 Anton Andryushchenko. AInq.Helpers.Polly is licensed under [Apache License 2.0](LICENSE)
