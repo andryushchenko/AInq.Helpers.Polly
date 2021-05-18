@@ -166,9 +166,18 @@
         <member name="M:AInq.Helpers.Polly.HttpRetryPolicies.TransientRetryAsyncPolicy">
             <summary> Retry forever on transient errors with logging if request context contains logger </summary>
         </member>
+        <member name="M:AInq.Helpers.Polly.HttpRetryPolicies.TransientRetryAsyncPolicy(System.Int32)">
+            <summary> Retry on transient errors with logging if request context contains logger </summary>
+            <param name="maxRetry"> Max retry count </param>
+        </member>
         <member name="M:AInq.Helpers.Polly.HttpRetryPolicies.TimeoutRetryAsyncPolicy(System.TimeSpan)">
             <summary> Retry forever with increasing timeout on HTTP 429 with logging if request context contains logger </summary>
             <param name="timeout"> Minimum retry timeout </param>
+        </member>
+        <member name="M:AInq.Helpers.Polly.HttpRetryPolicies.TimeoutRetryAsyncPolicy(System.TimeSpan,System.Int32)">
+            <summary> Retry with increasing timeout on HTTP 429 with logging if request context contains logger </summary>
+            <param name="timeout"> Minimum retry timeout </param>
+            <param name="maxRetry"> Max retry count </param>
         </member>
     </members>
 </doc>

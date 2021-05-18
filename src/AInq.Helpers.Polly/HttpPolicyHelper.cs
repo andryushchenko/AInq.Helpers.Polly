@@ -45,7 +45,7 @@ public static class HttpPolicyHelper
         var result = await policy
                            .ExecuteAsync(async (ctx, cancel) =>
                                {
-                                   using var request = new HttpRequestMessage(ctx.Get<HttpMethod>(MethodKey)!, ctx.Get<string>(UrlKey))
+                                   var request = new HttpRequestMessage(ctx.Get<HttpMethod>(MethodKey)!, ctx.Get<string>(UrlKey))
                                    {
                                        Content = ctx.Get<HttpContent>(ContentKey)
                                    };

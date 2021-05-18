@@ -31,6 +31,13 @@ public static class HttpRetryPolicies
                      => response.StatusCode == HttpStatusCode.RequestTimeout || (int) response.StatusCode >= 500)
                  .RetryForeverAsync(OnTransientRetry);
 
+    /// <summary> Retry on transient errors with logging if request context contains logger </summary>
+    /// <param name="maxRetry"> Max retry count </param>
+    public static IAsyncPolicy<HttpResponseMessage> TransientRetryAsyncPolicy(int maxRetry)
+        => Policy.Handle<HttpRequestException>()
+                 .OrResult<HttpResponseMessage>(response
+                     => response.StatusCode == HttpStatusCode.RequestTimeout || (int) response.StatusCode >= 500)
+                 .RetryAsync(maxRetry >= 1 ? maxRetry : throw new ArgumentOutOfRangeException(nameof(maxRetry)), OnTransientRetry);
 
     /// <summary> Retry forever with increasing timeout on HTTP 429 with logging if request context contains logger </summary>
     /// <param name="timeout"> Minimum retry timeout </param>
@@ -40,6 +47,20 @@ public static class HttpRetryPolicies
         return Policy.HandleResult<HttpResponseMessage>(response => response.StatusCode == (HttpStatusCode) 429)
                      .WaitAndRetryForeverAsync((attempt, _) => TimeSpan.FromTicks(timeout.Ticks * attempt * attempt), OnTimeoutRetry);
     }
+
+    /// <summary> Retry with increasing timeout on HTTP 429 with logging if request context contains logger </summary>
+    /// <param name="timeout"> Minimum retry timeout </param>
+    /// <param name="maxRetry"> Max retry count </param>
+    public static IAsyncPolicy<HttpResponseMessage> TimeoutRetryAsyncPolicy(TimeSpan timeout, int maxRetry)
+    {
+        if (timeout < TimeSpan.Zero) throw new ArgumentOutOfRangeException(nameof(timeout));
+        if (maxRetry < 1) throw new ArgumentOutOfRangeException(nameof(maxRetry));
+        return Policy.HandleResult<HttpResponseMessage>(response => response.StatusCode == (HttpStatusCode) 429)
+                     .WaitAndRetryAsync(maxRetry, (attempt, _) => TimeSpan.FromTicks(timeout.Ticks * attempt * attempt), OnTimeoutRetry);
+    }
+
+    private static void OnTimeoutRetry(DelegateResult<HttpResponseMessage> result, TimeSpan wait, int attempt, Context context)
+        => OnTimeoutRetry(result, attempt, wait, context);
 
     private static void OnTimeoutRetry(DelegateResult<HttpResponseMessage> result, int attempt, TimeSpan wait, Context context)
         => context.GetLogger()
