@@ -17,6 +17,8 @@
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageTags>AInq;Polly;Helper</PackageTags>
     <Description>Helpers for Polly: store data in Context, retry policies, HTTP request with policy</Description>
+    <PackageReleaseNotes>[FIX] Request Content incorrect dispose
+[ADD] Retry policies with max retry limit</PackageReleaseNotes>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
