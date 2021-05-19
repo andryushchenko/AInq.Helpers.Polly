@@ -11,14 +11,13 @@
     <Copyright>Anton Andryushchenko</Copyright>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/andryushchenko/AInq.Helpers.Polly</PackageProjectUrl>
-    <Version>1.1.0</Version>
+    <Version>1.1.1</Version>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageTags>AInq;Polly;Helper</PackageTags>
     <Description>Helpers for Polly: store data in Context, retry policies, HTTP request with policy</Description>
-    <PackageReleaseNotes>[FIX] Request Content incorrect dispose
-[ADD] Retry policies with max retry limit</PackageReleaseNotes>
+    <PackageReleaseNotes>[ADD] Continue on captured context option</PackageReleaseNotes>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
