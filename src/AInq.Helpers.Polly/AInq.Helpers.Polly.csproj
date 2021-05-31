@@ -11,13 +11,13 @@
     <Copyright>Anton Andryushchenko</Copyright>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/andryushchenko/AInq.Helpers.Polly</PackageProjectUrl>
-    <Version>1.1.1</Version>
+    <Version>1.1.2</Version>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageTags>AInq;Polly;Helper</PackageTags>
     <Description>Helpers for Polly: store data in Context, retry policies, HTTP request with policy</Description>
-    <PackageReleaseNotes>[ADD] Continue on captured context option</PackageReleaseNotes>
+    <PackageReleaseNotes>[ADD] LogLevel option in HttpPolicyHelper</PackageReleaseNotes>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

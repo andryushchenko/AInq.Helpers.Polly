@@ -32,7 +32,8 @@ public static class HttpPolicyHelper
     private const string UrlKey = "content";
 
     private static async Task<HttpResponseMessage> RequestAsync(this IAsyncPolicy<HttpResponseMessage> policy, HttpClient client, string? url,
-        HttpMethod method, HttpContent? content, ILogger logger, CancellationToken cancellation, bool continueOnCapturedContext)
+        HttpMethod method, HttpContent? content, ILogger logger, CancellationToken cancellation, bool continueOnCapturedContext,
+        LogLevel logLevel)
     {
         var context = new Context().With(ClientKey, client)
                                    .With(MethodKey, method)
@@ -55,7 +56,8 @@ public static class HttpPolicyHelper
                                cancellation,
                                continueOnCapturedContext)
                            .ConfigureAwait(continueOnCapturedContext);
-        logger.LogDebug("HTTP {Method} to {Url} - {Code}",
+        logger.Log(logLevel,
+            "HTTP {Method} to {Url} - {Code}",
             result.RequestMessage?.Method,
             result.RequestMessage?.RequestUri,
             result.StatusCode);
@@ -71,8 +73,9 @@ public static class HttpPolicyHelper
     /// <param name="logger"> Logger instance </param>
     /// <param name="cancellation"> Cancellation token </param>
     /// <param name="continueOnCapturedContext"> Continue on captured context </param>
+    /// <param name="requestLogLevel"> Log Level for request result </param>
     public static async Task<HttpResponseMessage> GetAsync(this IAsyncPolicy<HttpResponseMessage> policy, HttpClient client, string? url,
-        ILogger logger, CancellationToken cancellation = default, bool continueOnCapturedContext = false)
+        ILogger logger, CancellationToken cancellation = default, bool continueOnCapturedContext = false, LogLevel requestLogLevel = LogLevel.Debug)
         => await (policy ?? throw new ArgumentNullException(nameof(policy)))
                  .RequestAsync(client ?? throw new ArgumentNullException(nameof(client)),
                      url,
@@ -80,7 +83,8 @@ public static class HttpPolicyHelper
                      null,
                      logger ?? throw new ArgumentNullException(nameof(logger)),
                      cancellation,
-                     continueOnCapturedContext)
+                     continueOnCapturedContext,
+                     requestLogLevel)
                  .ConfigureAwait(continueOnCapturedContext);
 
     /// <summary> HTTP Get using preconfigured <see cref="HttpClient" /> </summary>
@@ -98,7 +102,8 @@ public static class HttpPolicyHelper
                      null,
                      NullLogger.Instance,
                      cancellation,
-                     continueOnCapturedContext)
+                     continueOnCapturedContext,
+                     LogLevel.None)
                  .ConfigureAwait(continueOnCapturedContext);
 
     /// <summary> HTTP Get </summary>
@@ -107,8 +112,9 @@ public static class HttpPolicyHelper
     /// <param name="logger"> Logger instance </param>
     /// <param name="cancellation"> Cancellation token </param>
     /// <param name="continueOnCapturedContext"> Continue on captured context </param>
+    /// <param name="requestLogLevel"> Log Level for request result </param>
     public static async Task<HttpResponseMessage> GetAsync(this IAsyncPolicy<HttpResponseMessage> policy, string? url, ILogger logger,
-        CancellationToken cancellation = default, bool continueOnCapturedContext = false)
+        CancellationToken cancellation = default, bool continueOnCapturedContext = false, LogLevel requestLogLevel = LogLevel.Debug)
     {
         using var client = new HttpClient();
         return await (policy ?? throw new ArgumentNullException(nameof(policy)))
@@ -118,7 +124,8 @@ public static class HttpPolicyHelper
                          null,
                          logger ?? throw new ArgumentNullException(nameof(logger)),
                          cancellation,
-                         continueOnCapturedContext)
+                         continueOnCapturedContext,
+                         requestLogLevel)
                      .ConfigureAwait(continueOnCapturedContext);
     }
 
@@ -132,7 +139,7 @@ public static class HttpPolicyHelper
     {
         using var client = new HttpClient();
         return await (policy ?? throw new ArgumentNullException(nameof(policy)))
-                     .RequestAsync(client, url, HttpMethod.Get, null, NullLogger.Instance, cancellation, continueOnCapturedContext)
+                     .RequestAsync(client, url, HttpMethod.Get, null, NullLogger.Instance, cancellation, continueOnCapturedContext, LogLevel.None)
                      .ConfigureAwait(continueOnCapturedContext);
     }
 
@@ -147,8 +154,9 @@ public static class HttpPolicyHelper
     /// <param name="logger"> Logger instance </param>
     /// <param name="cancellation"> Cancellation token </param>
     /// <param name="continueOnCapturedContext"> Continue on captured context </param>
+    /// <param name="requestLogLevel"> Log Level for request result </param>
     public static async Task<HttpResponseMessage> DeleteAsync(this IAsyncPolicy<HttpResponseMessage> policy, HttpClient client, string? url,
-        ILogger logger, CancellationToken cancellation = default, bool continueOnCapturedContext = false)
+        ILogger logger, CancellationToken cancellation = default, bool continueOnCapturedContext = false, LogLevel requestLogLevel = LogLevel.Debug)
         => await (policy ?? throw new ArgumentNullException(nameof(policy)))
                  .RequestAsync(client ?? throw new ArgumentNullException(nameof(client)),
                      url,
@@ -156,7 +164,8 @@ public static class HttpPolicyHelper
                      null,
                      logger ?? throw new ArgumentNullException(nameof(logger)),
                      cancellation,
-                     continueOnCapturedContext)
+                     continueOnCapturedContext,
+                     requestLogLevel)
                  .ConfigureAwait(continueOnCapturedContext);
 
     /// <summary> HTTP Delete using preconfigured <see cref="HttpClient" /> </summary>
@@ -174,7 +183,8 @@ public static class HttpPolicyHelper
                      null,
                      NullLogger.Instance,
                      cancellation,
-                     continueOnCapturedContext)
+                     continueOnCapturedContext,
+                     LogLevel.None)
                  .ConfigureAwait(continueOnCapturedContext);
 
     /// <summary> HTTP Delete </summary>
@@ -183,8 +193,9 @@ public static class HttpPolicyHelper
     /// <param name="logger"> Logger instance </param>
     /// <param name="cancellation"> Cancellation token </param>
     /// <param name="continueOnCapturedContext"> Continue on captured context </param>
+    /// <param name="requestLogLevel"> Log Level for request result </param>
     public static async Task<HttpResponseMessage> DeleteAsync(this IAsyncPolicy<HttpResponseMessage> policy, string? url, ILogger logger,
-        CancellationToken cancellation = default, bool continueOnCapturedContext = false)
+        CancellationToken cancellation = default, bool continueOnCapturedContext = false, LogLevel requestLogLevel = LogLevel.Debug)
     {
         using var client = new HttpClient();
         return await (policy ?? throw new ArgumentNullException(nameof(policy)))
@@ -194,7 +205,8 @@ public static class HttpPolicyHelper
                          null,
                          logger ?? throw new ArgumentNullException(nameof(logger)),
                          cancellation,
-                         continueOnCapturedContext)
+                         continueOnCapturedContext,
+                         requestLogLevel)
                      .ConfigureAwait(continueOnCapturedContext);
     }
 
@@ -208,7 +220,7 @@ public static class HttpPolicyHelper
     {
         using var client = new HttpClient();
         return await (policy ?? throw new ArgumentNullException(nameof(policy)))
-                     .RequestAsync(client, url, HttpMethod.Delete, null, NullLogger.Instance, cancellation, continueOnCapturedContext)
+                     .RequestAsync(client, url, HttpMethod.Delete, null, NullLogger.Instance, cancellation, continueOnCapturedContext, LogLevel.None)
                      .ConfigureAwait(continueOnCapturedContext);
     }
 
@@ -224,8 +236,10 @@ public static class HttpPolicyHelper
     /// <param name="logger"> Logger instance </param>
     /// <param name="cancellation"> Cancellation token </param>
     /// <param name="continueOnCapturedContext"> Continue on captured context </param>
+    /// <param name="requestLogLevel"> Log Level for request result </param>
     public static async Task<HttpResponseMessage> PostAsync(this IAsyncPolicy<HttpResponseMessage> policy, HttpClient client, string? url,
-        HttpContent content, ILogger logger, CancellationToken cancellation = default, bool continueOnCapturedContext = false)
+        HttpContent content, ILogger logger, CancellationToken cancellation = default, bool continueOnCapturedContext = false,
+        LogLevel requestLogLevel = LogLevel.Debug)
         => await (policy ?? throw new ArgumentNullException(nameof(policy)))
                  .RequestAsync(client ?? throw new ArgumentNullException(nameof(client)),
                      url,
@@ -233,7 +247,8 @@ public static class HttpPolicyHelper
                      content ?? throw new ArgumentNullException(nameof(content)),
                      logger ?? throw new ArgumentNullException(nameof(logger)),
                      cancellation,
-                     continueOnCapturedContext)
+                     continueOnCapturedContext,
+                     requestLogLevel)
                  .ConfigureAwait(continueOnCapturedContext);
 
     /// <summary> HTTP Post using preconfigured <see cref="HttpClient" /> </summary>
@@ -252,7 +267,8 @@ public static class HttpPolicyHelper
                      content ?? throw new ArgumentNullException(nameof(content)),
                      NullLogger.Instance,
                      cancellation,
-                     continueOnCapturedContext)
+                     continueOnCapturedContext,
+                     LogLevel.None)
                  .ConfigureAwait(continueOnCapturedContext);
 
     /// <summary> HTTP Post </summary>
@@ -262,8 +278,9 @@ public static class HttpPolicyHelper
     /// <param name="logger"> Logger instance </param>
     /// <param name="cancellation"> Cancellation token </param>
     /// <param name="continueOnCapturedContext"> Continue on captured context </param>
+    /// <param name="requestLogLevel"> Log Level for request result </param>
     public static async Task<HttpResponseMessage> PostAsync(this IAsyncPolicy<HttpResponseMessage> policy, string? url, HttpContent content,
-        ILogger logger, CancellationToken cancellation = default, bool continueOnCapturedContext = false)
+        ILogger logger, CancellationToken cancellation = default, bool continueOnCapturedContext = false, LogLevel requestLogLevel = LogLevel.Debug)
     {
         using var client = new HttpClient();
         return await (policy ?? throw new ArgumentNullException(nameof(policy)))
@@ -273,7 +290,8 @@ public static class HttpPolicyHelper
                          content ?? throw new ArgumentNullException(nameof(content)),
                          logger ?? throw new ArgumentNullException(nameof(logger)),
                          cancellation,
-                         continueOnCapturedContext)
+                         continueOnCapturedContext,
+                         requestLogLevel)
                      .ConfigureAwait(continueOnCapturedContext);
     }
 
@@ -294,7 +312,8 @@ public static class HttpPolicyHelper
                          content ?? throw new ArgumentNullException(nameof(content)),
                          NullLogger.Instance,
                          cancellation,
-                         continueOnCapturedContext)
+                         continueOnCapturedContext,
+                         LogLevel.None)
                      .ConfigureAwait(continueOnCapturedContext);
     }
 
@@ -310,8 +329,10 @@ public static class HttpPolicyHelper
     /// <param name="logger"> Logger instance </param>
     /// <param name="cancellation"> Cancellation token </param>
     /// <param name="continueOnCapturedContext"> Continue on captured context </param>
+    /// <param name="requestLogLevel"> Log Level for request result </param>
     public static async Task<HttpResponseMessage> PutAsync(this IAsyncPolicy<HttpResponseMessage> policy, HttpClient client, string? url,
-        HttpContent content, ILogger logger, CancellationToken cancellation = default, bool continueOnCapturedContext = false)
+        HttpContent content, ILogger logger, CancellationToken cancellation = default, bool continueOnCapturedContext = false,
+        LogLevel requestLogLevel = LogLevel.Debug)
         => await (policy ?? throw new ArgumentNullException(nameof(policy)))
                  .RequestAsync(client ?? throw new ArgumentNullException(nameof(client)),
                      url,
@@ -319,7 +340,8 @@ public static class HttpPolicyHelper
                      content ?? throw new ArgumentNullException(nameof(content)),
                      logger ?? throw new ArgumentNullException(nameof(logger)),
                      cancellation,
-                     continueOnCapturedContext)
+                     continueOnCapturedContext,
+                     requestLogLevel)
                  .ConfigureAwait(continueOnCapturedContext);
 
     /// <summary> HTTP Put using preconfigured <see cref="HttpClient" /> </summary>
@@ -338,7 +360,8 @@ public static class HttpPolicyHelper
                      content ?? throw new ArgumentNullException(nameof(content)),
                      NullLogger.Instance,
                      cancellation,
-                     continueOnCapturedContext)
+                     continueOnCapturedContext,
+                     LogLevel.None)
                  .ConfigureAwait(continueOnCapturedContext);
 
     /// <summary> HTTP Put </summary>
@@ -348,8 +371,9 @@ public static class HttpPolicyHelper
     /// <param name="logger"> Logger instance </param>
     /// <param name="cancellation"> Cancellation token </param>
     /// <param name="continueOnCapturedContext"> Continue on captured context </param>
+    /// <param name="requestLogLevel"> Log Level for request result </param>
     public static async Task<HttpResponseMessage> PutAsync(this IAsyncPolicy<HttpResponseMessage> policy, string? url, HttpContent content,
-        ILogger logger, CancellationToken cancellation = default, bool continueOnCapturedContext = false)
+        ILogger logger, CancellationToken cancellation = default, bool continueOnCapturedContext = false, LogLevel requestLogLevel = LogLevel.Debug)
     {
         using var client = new HttpClient();
         return await (policy ?? throw new ArgumentNullException(nameof(policy)))
@@ -359,7 +383,8 @@ public static class HttpPolicyHelper
                          content ?? throw new ArgumentNullException(nameof(content)),
                          logger ?? throw new ArgumentNullException(nameof(logger)),
                          cancellation,
-                         continueOnCapturedContext)
+                         continueOnCapturedContext,
+                         requestLogLevel)
                      .ConfigureAwait(continueOnCapturedContext);
     }
 
@@ -380,7 +405,8 @@ public static class HttpPolicyHelper
                          content ?? throw new ArgumentNullException(nameof(content)),
                          NullLogger.Instance,
                          cancellation,
-                         continueOnCapturedContext)
+                         continueOnCapturedContext,
+                         LogLevel.None)
                      .ConfigureAwait(continueOnCapturedContext);
     }
 
