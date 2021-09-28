@@ -28,16 +28,14 @@ public static class HttpRetryPolicies
     /// <summary> Retry forever on transient errors with logging if request context contains logger </summary>
     public static IAsyncPolicy<HttpResponseMessage> TransientRetryAsyncPolicy()
         => Policy.Handle<HttpRequestException>()
-                 .OrResult<HttpResponseMessage>(response
-                     => response.StatusCode == HttpStatusCode.RequestTimeout || (int) response.StatusCode >= 500)
+                 .OrResult<HttpResponseMessage>(response => response.StatusCode == HttpStatusCode.RequestTimeout || (int) response.StatusCode >= 500)
                  .RetryForeverAsync(OnTransientRetry);
 
     /// <summary> Retry on transient errors with logging if request context contains logger </summary>
     /// <param name="maxRetry"> Max retry count </param>
     public static IAsyncPolicy<HttpResponseMessage> TransientRetryAsyncPolicy(int maxRetry)
         => Policy.Handle<HttpRequestException>()
-                 .OrResult<HttpResponseMessage>(response
-                     => response.StatusCode == HttpStatusCode.RequestTimeout || (int) response.StatusCode >= 500)
+                 .OrResult<HttpResponseMessage>(response => response.StatusCode == HttpStatusCode.RequestTimeout || (int) response.StatusCode >= 500)
                  .RetryAsync(maxRetry >= 1 ? maxRetry : throw new ArgumentOutOfRangeException(nameof(maxRetry)), OnTransientRetry);
 
     /// <summary> Retry forever with given timeout on HTTP 429 with logging if request context contains logger </summary>
@@ -45,8 +43,7 @@ public static class HttpRetryPolicies
     public static IAsyncPolicy<HttpResponseMessage> TimeoutRetryAsyncPolicy(TimeSpan timeout)
     {
         if (timeout < TimeSpan.Zero) throw new ArgumentOutOfRangeException(nameof(timeout));
-        return Policy.HandleResult<HttpResponseMessage>(response => response.StatusCode == (HttpStatusCode) 429)
-                     .WaitAndRetryForeverAsync((_, _) => timeout, OnTimeoutRetry);
+        return CreateHttp429PolicyBuilder().WaitAndRetryForeverAsync((_, _) => timeout, OnTimeoutRetry);
     }
 
     /// <summary> Retry with given timeout on HTTP 429 with logging if request context contains logger </summary>
@@ -56,8 +53,7 @@ public static class HttpRetryPolicies
     {
         if (timeout < TimeSpan.Zero) throw new ArgumentOutOfRangeException(nameof(timeout));
         if (maxRetry < 1) throw new ArgumentOutOfRangeException(nameof(maxRetry));
-        return Policy.HandleResult<HttpResponseMessage>(response => response.StatusCode == (HttpStatusCode) 429)
-                     .WaitAndRetryAsync(maxRetry, (_, _) => timeout, OnTimeoutRetry);
+        return CreateHttp429PolicyBuilder().WaitAndRetryAsync(maxRetry, (_, _) => timeout, OnTimeoutRetry);
     }
 
     /// <summary> Retry forever with provided timeout on HTTP 429 with logging if request context contains logger </summary>
@@ -65,8 +61,7 @@ public static class HttpRetryPolicies
     public static IAsyncPolicy<HttpResponseMessage> TimeoutRetryAsyncPolicy(Func<int, TimeSpan> timeoutProvider)
     {
         _ = timeoutProvider ?? throw new ArgumentNullException(nameof(timeoutProvider));
-        return Policy.HandleResult<HttpResponseMessage>(response => response.StatusCode == (HttpStatusCode) 429)
-                     .WaitAndRetryForeverAsync((attempt, _) => timeoutProvider.Invoke(attempt), OnTimeoutRetryAsync);
+        return CreateHttp429PolicyBuilder().WaitAndRetryForeverAsync((attempt, _) => timeoutProvider.Invoke(attempt), OnTimeoutRetryAsync);
     }
 
     /// <summary> Retry with provided timeout on HTTP 429 with logging if request context contains logger </summary>
@@ -76,8 +71,7 @@ public static class HttpRetryPolicies
     {
         _ = timeoutProvider ?? throw new ArgumentNullException(nameof(timeoutProvider));
         if (maxRetry < 1) throw new ArgumentOutOfRangeException(nameof(maxRetry));
-        return Policy.HandleResult<HttpResponseMessage>(response => response.StatusCode == (HttpStatusCode) 429)
-                     .WaitAndRetryAsync(maxRetry, (attempt, _) => timeoutProvider.Invoke(attempt), OnTimeoutRetryAsync);
+        return CreateHttp429PolicyBuilder().WaitAndRetryAsync(maxRetry, (attempt, _) => timeoutProvider.Invoke(attempt), OnTimeoutRetryAsync);
     }
 
     /// <summary> Retry forever with provided timeout on HTTP 429 with logging if request context contains logger </summary>
@@ -85,8 +79,8 @@ public static class HttpRetryPolicies
     public static IAsyncPolicy<HttpResponseMessage> TimeoutRetryAsyncPolicy(Func<HttpResponseMessage, int, TimeSpan> timeoutProvider)
     {
         _ = timeoutProvider ?? throw new ArgumentNullException(nameof(timeoutProvider));
-        return Policy.HandleResult<HttpResponseMessage>(response => response.StatusCode == (HttpStatusCode) 429)
-                     .WaitAndRetryForeverAsync((attempt, result, _) => timeoutProvider.Invoke(result.Result, attempt), OnTimeoutRetryAsync);
+        return CreateHttp429PolicyBuilder()
+            .WaitAndRetryForeverAsync((attempt, result, _) => timeoutProvider.Invoke(result.Result, attempt), OnTimeoutRetryAsync);
     }
 
     /// <summary> Retry with provided timeout on HTTP 429 with logging if request context contains logger </summary>
@@ -96,8 +90,8 @@ public static class HttpRetryPolicies
     {
         _ = timeoutProvider ?? throw new ArgumentNullException(nameof(timeoutProvider));
         if (maxRetry < 1) throw new ArgumentOutOfRangeException(nameof(maxRetry));
-        return Policy.HandleResult<HttpResponseMessage>(response => response.StatusCode == (HttpStatusCode) 429)
-                     .WaitAndRetryAsync(maxRetry, (attempt, result, _) => timeoutProvider.Invoke(result.Result, attempt), OnTimeoutRetryAsync);
+        return CreateHttp429PolicyBuilder()
+            .WaitAndRetryAsync(maxRetry, (attempt, result, _) => timeoutProvider.Invoke(result.Result, attempt), OnTimeoutRetryAsync);
     }
 
     private static Task OnTimeoutRetryAsync(DelegateResult<HttpResponseMessage> result, int attempt, TimeSpan wait, Context context)
@@ -136,6 +130,13 @@ public static class HttpRetryPolicies
         else
             context.GetLogger().LogWarning(result.Exception, "HTTP Request failed with exception - retry {Attempt}", attempt);
     }
+
+    private static PolicyBuilder<HttpResponseMessage> CreateHttp429PolicyBuilder()
+#if NET5_0_OR_GREATER
+        => Policy.HandleResult<HttpResponseMessage>(response => response.StatusCode == HttpStatusCode.TooManyRequests);
+#else
+        => Policy.HandleResult<HttpResponseMessage>(response => response.StatusCode == (HttpStatusCode) 429);
+#endif
 }
 
 }
