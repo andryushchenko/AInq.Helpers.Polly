@@ -12,15 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Microsoft.Extensions.Logging;
-using Polly;
-using System;
 using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
 
-namespace AInq.Helpers.Polly
-{
+namespace AInq.Helpers.Polly;
 
 /// <summary> Retry policies for HTTP requests </summary>
 public static class HttpRetryPolicies
@@ -137,6 +131,4 @@ public static class HttpRetryPolicies
 #else
         => Policy.HandleResult<HttpResponseMessage>(response => response.StatusCode == (HttpStatusCode) 429);
 #endif
-}
-
 }

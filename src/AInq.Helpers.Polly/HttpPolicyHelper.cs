@@ -12,16 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
-using Polly;
-using System;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace AInq.Helpers.Polly
-{
+namespace AInq.Helpers.Polly;
 
 /// <summary> Helper to make HTTP requests with given <see cref="IAsyncPolicy{TResult}" /> </summary>
 public static class HttpPolicyHelper
@@ -32,13 +23,9 @@ public static class HttpPolicyHelper
     private const string UrlKey = "content";
 
     private static async Task<HttpResponseMessage> RequestAsync(this IAsyncPolicy<HttpResponseMessage> policy, HttpClient client, string? url,
-        HttpMethod method, HttpContent? content, ILogger logger, CancellationToken cancellation, bool continueOnCapturedContext,
-        LogLevel logLevel)
+        HttpMethod method, HttpContent? content, ILogger logger, CancellationToken cancellation, bool continueOnCapturedContext, LogLevel logLevel)
     {
-        var context = new Context().With(ClientKey, client)
-                                   .With(MethodKey, method)
-                                   .WithCancellation(cancellation)
-                                   .WithLogger(logger);
+        var context = new Context().With(ClientKey, client).With(MethodKey, method).WithCancellation(cancellation).WithLogger(logger);
         if (content != null)
             context.With(ContentKey, content);
         if (!string.IsNullOrWhiteSpace(url))
@@ -411,6 +398,4 @@ public static class HttpPolicyHelper
     }
 
 #endregion
-}
-
 }

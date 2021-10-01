@@ -12,14 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
-using Polly;
-using System;
-using System.Threading;
-
-namespace AInq.Helpers.Polly
-{
+namespace AInq.Helpers.Polly;
 
 /// <summary> Helpers to store data in <see cref="Context" /> </summary>
 public static class ContextHelper
@@ -71,6 +64,4 @@ public static class ContextHelper
     /// <param name="context"> Context </param>
     public static ILogger GetLogger(this Context context)
         => context.Get<ILogger>(LoggerKey) ?? NullLogger.Instance;
-}
-
 }
